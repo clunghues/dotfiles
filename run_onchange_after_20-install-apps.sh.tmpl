@@ -1,0 +1,18 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+# Installs apps from ~/.config/machine-setup/Brewfile. chezmoi re-runs this only when the rendered Brewfile
+# changes (hash below) or after a failed run. To force: chezmoi state delete-bucket --bucket=scriptState && chezmoi apply
+# brewfile hash: {{ includeTemplate "brewfile" . | sha256sum }}
+set -eu
+if ! command -v brew >/dev/null 2>&1; then
+  for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    if [ -x "$b" ]; then eval "$("$b" shellenv)"; break; fi
+  done
+fi
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew is not installed. Install it from https://brew.sh and run 'chezmoi apply' again." >&2
+  exit 1
+fi
+brew bundle --file="$HOME/.config/machine-setup/Brewfile" --no-upgrade
+echo "apps: Brewfile applied. Manual items: $HOME/.config/machine-setup/manual.md"
+{{- end }}

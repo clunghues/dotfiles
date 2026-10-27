@@ -1,0 +1,17 @@
+{{- if eq .chezmoi.os "windows" -}}
+# Installs apps from ~/.config/machine-setup/winget.json. chezmoi re-runs this only when the rendered file
+# changes (hash below) or after a failed run. To force: chezmoi state delete-bucket --bucket=scriptState; chezmoi apply
+# winget hash: {{ includeTemplate "winget-json" . | sha256sum }}
+$ErrorActionPreference = 'Stop'
+$file = Join-Path $HOME '.config\machine-setup\winget.json'
+if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+  Write-Error 'winget is not available. Install "App Installer" from the Microsoft Store and run chezmoi apply again.'
+  exit 1
+}
+winget import -i $file --no-upgrade --accept-source-agreements --accept-package-agreements --disable-interactivity
+if ($LASTEXITCODE -ne 0) {
+  Write-Error "winget import exited with $LASTEXITCODE (see output above; re-run chezmoi apply to retry)"
+  exit $LASTEXITCODE
+}
+Write-Output "apps: winget.json applied. Manual items: $HOME\.config\machine-setup\manual.md"
+{{- end }}

@@ -1,0 +1,8 @@
+README.md
+.gitattributes
+{{ if ne .chezmoi.os "darwin" }}
+.config/machine-setup/Brewfile
+{{ end }}
+{{ if ne .chezmoi.os "windows" }}
+.config/machine-setup/winget.json
+{{ end }}

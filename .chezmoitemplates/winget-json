@@ -1,0 +1,22 @@
+{{- $ids := includeTemplate "app-ids" . | trim | splitList "\n" -}}
+{{- $pkgs := list -}}
+{{- range $ids }}{{ with index (index $.apps .) "windows" }}{{ if eq .provider "winget" }}{{ $pkgs = append $pkgs .package }}{{ end }}{{ end }}{{ end -}}
+{
+  "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
+  "CreationDate": "2026-01-01T00:00:00.000-00:00",
+  "Sources": [
+    {
+      "SourceDetails": {
+        "Argument": "https://cdn.winget.microsoft.com/cache",
+        "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
+        "Name": "winget",
+        "Type": "Microsoft.PreIndexed.Package"
+      },
+      "Packages": [
+{{- range $i, $p := $pkgs }}{{ if $i }},{{ end }}
+        { "PackageIdentifier": "{{ $p }}" }
+{{- end }}
+      ]
+    }
+  ]
+}

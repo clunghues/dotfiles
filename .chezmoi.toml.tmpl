@@ -1,0 +1,8 @@
+{{- $machine := promptStringOnce . "machine" "Machine id (one of the keys under machines: in .chezmoidata/apps.yaml, e.g. pc, macbook)" -}}
+[data]
+    machine = {{ $machine | quote }}
+{{ if eq .chezmoi.os "windows" }}
+[interpreters.ps1]
+    command = "powershell.exe"
+    args = ["-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File"]
+{{ end -}}

@@ -1,0 +1,51 @@
+# Single source of truth for apps on every machine.
+#
+# apps:      install method per OS. providers:
+#              darwin:  brew | cask | mas | manual
+#              windows: winget | scoop | manual   (scoop: not applied yet, listed in manual.md)
+# profiles:  named lists of app ids
+# machines:  which profiles each machine gets. `machine` is asked once at `chezmoi init`
+#            and stored in ~/.config/chezmoi/chezmoi.toml.
+#
+# Rules: apply installs what is missing and never upgrades or removes anything.
+# Changing a provider (winget -> scoop) does not migrate an existing install.
+
+apps:
+  obsidian:
+    name: Obsidian
+    darwin: { provider: cask, package: obsidian }
+    windows: { provider: winget, package: Obsidian.Obsidian }
+  vscode:
+    name: Visual Studio Code
+    darwin: { provider: cask, package: visual-studio-code }
+    windows: { provider: winget, package: Microsoft.VisualStudioCode }
+  localsend:
+    name: LocalSend
+    darwin: { provider: cask, package: localsend }
+    windows: { provider: winget, package: LocalSend.LocalSend }
+  dbeaver:
+    name: DBeaver Community
+    darwin: { provider: cask, package: dbeaver-community }
+    windows: { provider: winget, package: DBeaver.DBeaver.Community }
+  tabby:
+    name: Tabby
+    darwin: { provider: cask, package: tabby }
+    windows: { provider: winget, package: Eugeny.Tabby }
+  steam:
+    name: Steam
+    darwin: { provider: cask, package: steam }
+    windows: { provider: winget, package: Valve.Steam }
+  logi-options-plus:
+    name: Logi Options+
+    darwin: { provider: manual, url: https://www.logitech.com/software/logi-options-plus.html }
+    windows: { provider: manual, url: https://www.logitech.com/software/logi-options-plus.html }
+
+profiles:
+  core: [obsidian, vscode, localsend, dbeaver, tabby]
+  home: [steam, logi-options-plus]
+
+machines:
+  pc:
+    profiles: [core, home]
+  macbook:
+    profiles: [core]

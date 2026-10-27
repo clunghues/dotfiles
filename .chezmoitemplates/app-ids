@@ -1,0 +1,15 @@
+{{- /* Outputs the sorted, de-duplicated app ids for this machine, one per line. Fails loudly on typos. */ -}}
+{{- $machine := index . "machine" | default "" -}}
+{{- if not (hasKey .machines $machine) -}}
+{{-   fail (printf "unknown machine %q: set [data] machine in ~/.config/chezmoi/chezmoi.toml to one of: %s" $machine (keys .machines | sortAlpha | join ", ")) -}}
+{{- end -}}
+{{- $ids := list -}}
+{{- range (index .machines $machine).profiles -}}
+{{-   if not (hasKey $.profiles .) }}{{ fail (printf "machine %q references unknown profile %q" $machine .) }}{{ end -}}
+{{-   range (index $.profiles .) -}}
+{{-     if not (hasKey $.apps .) }}{{ fail (printf "profile references unknown app id %q" .) }}{{ end -}}
+{{-     $ids = append $ids . -}}
+{{-   end -}}
+{{- end -}}
+{{- range ($ids | uniq | sortAlpha) }}{{ . }}
+{{ end -}}
