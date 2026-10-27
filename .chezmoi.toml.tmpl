@@ -1,4 +1,5 @@
-{{- $machine := promptStringOnce . "machine" "Machine id (one of the keys under machines: in .chezmoidata/apps.yaml, e.g. pc, macbook)" -}}
+{{- /* Prompt text is deliberately just "machine" so `chezmoi init --promptString machine=pc` works non-interactively. */ -}}
+{{- $machine := promptStringOnce . "machine" "machine" -}}
 [data]
     machine = {{ $machine | quote }}
 {{ if eq .chezmoi.os "windows" }}
